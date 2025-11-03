@@ -113,6 +113,44 @@
   2. ジョブ失敗時は再試行→手動再送→サポート連絡のSOPを整備。
   3. Slackチャンネル構成(運用/検証)とアクセス権限を管理。
 
+## ローカル開発ガイド (スキャフォールド)
+
+このリポジトリには、Next.js(App Router)ベースのフロントエンドと、Expressによる簡易バックエンドのガワ実装が含まれています。
+
+### 必要環境
+- Node.js 18 以上
+- npm
+
+### 初期セットアップ
+```bash
+npm install
+```
+
+### フロントエンドの起動
+```bash
+npm run dev
+```
+`http://localhost:3000` でランキング画面および `/settings/*` サブルートを確認できます。各フォームはReact Hook Form + Zodでバリデーション済みのモック保存処理を備えています。
+
+### バックエンドモックの起動
+```bash
+npm run backend
+```
+`http://localhost:4000` で稼働し、OpenAI/kie.ai/Slack連携を模した簡易エンドポイント(`/jobs/openai`, `/jobs/kie-ai`, `/notifications/slack`)を提供します。環境変数として `OPEN_AI_YOUR_API_KEY`, `KIE_AI_API_KEY`, `SLACK_BOT_TOKEN` を設定してください。
+
+### 環境変数の例
+`.env.local` や `.env` に以下を設定するとモックが動作します。
+
+```
+OPEN_AI_YOUR_API_KEY=sk-openai-placeholder
+KIE_AI_API_KEY=kie-ai-placeholder
+SLACK_BOT_TOKEN=xoxb-placeholder
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=service-role-placeholder
+```
+
+> **NOTE:** 現状はあくまでモック実装です。Supabaseや外部APIへの実接続ロジックは `app/api/*` や `backend/server.js` の`console.info`部分を差し替えて拡張してください。
+
 ## リスクと対策
 - **APIコスト**: レート制御、ランキング単位の生成頻度設定、月次上限。
 - **生成失敗**: 再試行ポリシー、Slack失敗通知、ジョブステータス画面。
